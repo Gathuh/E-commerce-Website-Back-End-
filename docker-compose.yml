@@ -1,0 +1,78 @@
+services:
+  postgres:
+    container_name: ms_pg_sql
+    image: postgres
+    environment:
+      POSTGRES_USER: alibou
+      POSTGRES_PASSWORD: alibou
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5433:5432 # apparently the docker uses port 5433 but it maps to 5432 in my local terminal so the app must have a port 5433 which docker understands in .properties or .yml file
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: ms_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 5050:80
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  mongodb:
+    container_name: ms_mongo_db
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=alibou
+      - MONGO_INITDB_ROOT_PASSWORD=alibou
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  mongo-express:
+    container_name: ms_mongo_express
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=alibou
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=alibou
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - microservices-net
+
+  mail-dev:
+    container_name: ms_mail_dev
+    image: maildev/maildev
+    ports:
+      - 1080:80
+      - 1025:25
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
+  mongo:
