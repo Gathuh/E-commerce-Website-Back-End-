@@ -4,7 +4,7 @@ import com.gathu.ecommerce.category.Category;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductMpper {
+public class ProductMapper {
     public Product toProduct(ProductRequest request){
         return Product.builder()
                 .id(request.id())

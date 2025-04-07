@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,7 +16,7 @@ public class ProductService {
 
 
     private final ProductRepository repository;
-    private final ProductMpper mapper;
+    private final ProductMapper mapper;
     public  Integer createProduct(ProductRequest request) {
       Product product=  mapper.toProduct(request);
     return repository.save(product).getId();
